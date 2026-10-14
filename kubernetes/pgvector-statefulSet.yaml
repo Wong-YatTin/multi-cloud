@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgvector
+  labels:
+    app: pgvector
+spec:
+  serviceName: pgvector-headless
+  replicas: 1  # 用於生產環境時可增加到 2
+  selector:
+    matchLabels:
+      app: pgvector
+  template:
+    metadata:
+      labels:
+        app: pgvector
+    spec:
+      containers:
+      - name: postgres
+        image: ankane/pgvector
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+        - name: POSTGRES_USER
+          value: vtc_admin
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pgvector-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          value: vtc_chatbot
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata  # 設置特定的 PGDATA 路徑
+        volumeMounts:
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+        - name: init-scripts
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 1
+            memory: 2Gi
+      volumes:
+      - name: pgdata
+        persistentVolumeClaim:
+          claimName: pgvector-pvc
+      - name: init-scripts
+        configMap:
+          name: pgvector-init-scripts
+---
+# 初始化腳本 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgvector-init-scripts
+data:
+  init-vector.sh: |
+    #!/bin/bash
+    set -e
+    echo "Creating vector extension..."
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+      CREATE EXTENSION IF NOT EXISTS vector;
+    EOSQL
+---
+# LoadBalancer 服務用於外部訪問 -> 改為 ClusterIP 僅供內部訪問
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgvector
+  labels:
+    app: pgvector
+spec:
+  type: ClusterIP  # 從 LoadBalancer 改為 ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: pgvector
+---
+# 獨立的 PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgvector-pvc
+  labels:
+    app: pgvector
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

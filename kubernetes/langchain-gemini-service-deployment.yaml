@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langchain-gemini-service
+  labels:
+    app: langchain-gemini-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: langchain-gemini-service
+  template:
+    metadata:
+      labels:
+        app: langchain-gemini-service
+        tier: backend
+    spec:
+      containers:
+        - name: langchain-gemini-service
+          image: bulesirius/langchain-gemini-service:base
+          imagePullPolicy: Always
+          env:
+            - name: DB_NAME
+              value: vtc_chatbot
+            - name: DB_IP
+              value: pgvector
+            - name: DB_USER_NAME
+              value: vtc_admin
+            - name: CREDENTIALS
+              value: /app/credentials/key.json 
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgvector-secrets
+                  key: postgres-password
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+          - name: credentials-volume
+            mountPath: /app/credentials
+            readOnly: true
+      volumes:
+        - name: credentials-volume
+          secret:
+            secretName: langchain-gemini-service-secrets
