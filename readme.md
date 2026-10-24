@@ -3,17 +3,17 @@
 
 ## ✅ Assignment Requirements
 
-| # | Requirement | Marks | Where |
+| # | Requirement | Marks | 
 |---|---|---|---|
-| 1 | Multiple Cloud Providers | 15 | Azure AKS + GCP GKE |
-| 2 | VPC + 2 Private Subnets | 5 | `terraform/azure/` — 2 subnets; GCP ⚠️ 1 subnet |
-| 3 | Cluster AutoScaler | 5 | AKS 1–2 per pool, GKE 1–3 |
-| 4 | App with PostgreSQL StatefulSet | 5 | `kubernetes/` — pgvector |
-| 5 | Kubernetes Secrets | 5 | `pgvector-secrets`, `langchain-gemini-service-secrets` |
-| 6 | Cloud-native Load Balancer | 5 | Ingress + Cloudflare GSLB ⚠️ Azure AGIC |
-| 7 | SSL/TLS | 5 | Cloudflare edge TLS |
-| 8 | Cloud Logging | 5 | Log Analytics + Cloud Logging |
-| 9 | Multi-Cloud HA (DNS) | 5 | Cloudflare pools + TCP health checks |
+| 1 | Multiple Cloud Providers | 15 |
+| 2 | VPC + 2 Private Subnets | 5 |
+| 3 | Cluster AutoScaler | 5 | 
+| 4 | App with PostgreSQL StatefulSet | 5 |
+| 5 | Kubernetes Secrets | 5 | 
+| 6 | Cloud-native Load Balancer | 5 | 
+| 7 | SSL/TLS | 5 |
+| 8 | Cloud Logging | 5 | 
+| 9 | Multi-Cloud HA (DNS) | 5 | 
 
 
 
