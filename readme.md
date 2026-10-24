@@ -1,5 +1,5 @@
-# Deploy and manage Multi Cloud Kubernetes with Terraform
-### ITP4121  assignment
+# Deploy and manage Multi Cloud Kubernetes with Terraform (ITP4121  assignment)
+
 ### Azure AKS + GCP GKE, provisioned with Terraform, fronted by Cloudflare global load balancing
 
 > **My role:** architecture and implementation of the entire stack — Azure and GCP infrastructure,
