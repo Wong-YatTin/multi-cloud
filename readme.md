@@ -1,4 +1,5 @@
-# Multi-Cloud Kubernetes Platform
+# Deploy and manage Multi Cloud Kubernetes with Terraform
+### ITP4121  assignment
 ### Azure AKS + GCP GKE, provisioned with Terraform, fronted by Cloudflare global load balancing
 
 > **My role:** architecture and implementation of the entire stack — Azure and GCP infrastructure,
@@ -72,28 +73,3 @@ would have been fewer lines and much harder to debug when it timed out.
 origins terminate TLS at the cloud load balancer, and the edge probes on 443. A TCP monitor measures
 reachability without unwinding the TLS chain, which is the property I actually needed.
 
-## Problems hit
-
-| Problem | Resolution |
-|---|---|
-| The upstream multi-cloud reference stopped applying — module APIs had moved | `terraform init -upgrade`, then rewrote the deprecated arguments |
-| GKE apply failed on disabled APIs | `google_project_service` with `for_each`, sequenced behind Cloud Resource Manager |
-| Private clusters had no public endpoint to point DNS at | captured ingress addresses post-rollout; second apply configures DNS |
-| Pods in private subnets could not pull images | NAT Gateway (Azure) / Cloud NAT (GCP) with explicit subnet associations |
-| PVC initialisation failed on the mounted volume | `PGDATA` moved to a subdirectory so `lost+found` did not block `initdb` |
-
-## Known limitations
-
-- **Coursework scope, not production.** One workload, one region per cloud, no backup or disaster
-  recovery story, and no automated tests — verification was manual.
-- **GKE's control-plane endpoint is open to `0.0.0.0/0`.** The nodes are private, but
-  `master_authorized_networks` was left wide to keep `kubectl` usable; it should be narrowed to the
-  operator's address range.
-- **Terraform state is local** — no remote backend or locking.
-- **Ingress addresses are ephemeral.** Both clouds hand out a new IP on rebuild, which is what forces
-  the second apply; reserved static IPs would remove it.
-- **AKS ingress needs the Application Gateway controller enabled.** The manifest declares the class;
-  AGIC has to be on the cluster to reconcile it.
-- **`local-exec` paths are absolute** (`/workspaces/...`) — `path.module` would make them portable.
-- **Static service-account key.** Workload Identity (GKE) / Workload Identity Federation (AKS) would
-  remove the JSON key entirely.
