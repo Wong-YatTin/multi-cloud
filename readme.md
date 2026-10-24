@@ -1,19 +1,7 @@
 # Deploy and manage Multi Cloud Kubernetes with Terraform (ITP4121  assignment)
 
 
-## ✅ Assignment Requirements
 
-| # | Requirement | Marks | 
-|---|---|---|
-| 1 | Multiple Cloud Providers | 15 |
-| 2 | VPC + 2 Private Subnets | 5 |
-| 3 | Cluster AutoScaler | 5 | 
-| 4 | App with PostgreSQL StatefulSet | 5 |
-| 5 | Kubernetes Secrets | 5 | 
-| 6 | Cloud-native Load Balancer | 5 | 
-| 7 | SSL/TLS | 5 |
-| 8 | Cloud Logging | 5 | 
-| 9 | Multi-Cloud HA (DNS) | 5 | 
 
 ## Create multiple public cloud infrastructure and Kubernetes deployment with Terraform
 
@@ -60,4 +48,19 @@ Azure runs two node pools, one in each of two private subnets, spread across two
 GKE runs a single private node pool across two zones. Node pools autoscale (AKS 1–2 per pool, GKE
 1–3) and egress through managed NAT. Azure's API server is private; GKE's control-plane endpoint is
 public but restricted by authorised networks.
+
+## ✅ Assignment Requirements
+
+| # | Requirement | Marks | 
+|---|---|---|
+| 1 | Multiple Cloud Providers | 15 |
+| 2 | VPC + 2 Private Subnets | 5 |
+| 3 | Cluster AutoScaler | 5 | 
+| 4 | App with PostgreSQL StatefulSet | 5 |
+| 5 | Kubernetes Secrets | 5 | 
+| 6 | Cloud-native Load Balancer | 5 | 
+| 7 | SSL/TLS | 5 |
+| 8 | Cloud Logging | 5 | 
+| 9 | Multi-Cloud HA (DNS) | 5 | 
+
 
