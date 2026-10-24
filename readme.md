@@ -13,13 +13,6 @@ them. No node in either cluster has a public IP.
 Logging) · Kubernetes 1.31 · Cloudflare DNS / GSLB / TLS · PostgreSQL + pgvector · LangChain ·
 Gemini · Bash
 
-## What the brief fixed
-
-At least two cloud providers, Kubernetes inside a private VPC, a stateful database, credentials in
-Kubernetes `Secret`s, a cloud-native load balancer behind an `Ingress`, TLS, application logs shipped
-to each cloud's logging service, and a global DNS layer for cross-cloud availability. Everything in
-the next section is what I decided inside those lines.
-
 ## Architecture
 
 ```mermaid
@@ -55,20 +48,20 @@ public but restricted by authorised networks.
 
 ## Design decisions
 
-**Private workers were required; a private API server was my call.** The brief asked for workers in
-private subnets. On Azure I also made the control plane private, which is why `kubectl` never runs
-from the laptop and every command goes through `az aks command invoke`. The alternative is a bastion
-host; `command invoke` needs no extra infrastructure and leaves the topology untouched. Every call
-pays a pod-start delay, and that is the part I would revisit first.
+**A private API server on Azure.** Workers are private on both clouds, but Azure's control plane is
+private too, which is why `kubectl` never runs from the laptop — every command goes through
+`az aks command invoke`. The alternative is a bastion host; `command invoke` needs no extra
+infrastructure and leaves the topology untouched. Every call pays a pod-start delay, and that is the
+part I would revisit first.
 
-**Ingress in front of ClusterIP services.** The brief asked for a cloud-native load balancer via
-`Ingress`. Keeping every service `ClusterIP` was mine: one entry point per cluster holds TLS and
-routing in a single place, and a service cannot accidentally become public.
+**Ingress in front of ClusterIP services.** The API is reached only through an `Ingress`, and every
+service — including the database — stays `ClusterIP`. One entry point per cluster keeps TLS and
+routing in a single place, and no service can accidentally become public.
 
-**Postgres with pgvector, initialised by a ConfigMap.** A stateful database was required; choosing
-`pgvector` was driven by the workload, which needs similarity search next to the data. The `vector`
-extension is created by an init script mounted from a ConfigMap, so a fresh volume initialises
-itself. The cost is that backups and failover are mine to own — flagged below rather than hidden.
+**Postgres with pgvector, initialised by a ConfigMap.** The database choice follows the workload,
+which needs similarity search next to the data. The `vector` extension is created by an init script
+mounted from a ConfigMap, so a fresh volume initialises itself. The cost is that backups and failover
+are mine to own — flagged below rather than hidden.
 
 **Two-phase apply across three providers.** Cloudflare's DNS and pool config need ingress addresses
 that only exist after the clusters are built, so the rollout scripts write the real address back to
@@ -93,7 +86,7 @@ reachability without unwinding the TLS chain, which is the property I actually n
 
 - **Coursework scope, not production.** One workload, one region per cloud, no backup or disaster
   recovery story, and no automated tests — verification was manual.
-- **GKE's control-plane endpoint is open to `0.0.0.0/0`.** The cluster has private nodes, but
+- **GKE's control-plane endpoint is open to `0.0.0.0/0`.** The nodes are private, but
   `master_authorized_networks` was left wide to keep `kubectl` usable; it should be narrowed to the
   operator's address range.
 - **Terraform state is local** — no remote backend or locking.
