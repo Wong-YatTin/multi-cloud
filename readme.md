@@ -41,35 +41,8 @@ flowchart LR
     CF --> A1
     CF --> G1
 ```
-
 Azure runs two node pools, one in each of two private subnets, spread across two availability zones;
 GKE runs a single private node pool across two zones. Node pools autoscale (AKS 1–2 per pool, GKE
 1–3) and egress through managed NAT. Azure's API server is private; GKE's control-plane endpoint is
 public but restricted by authorised networks.
-
-## Design decisions
-
-**A private API server on Azure.** Workers are private on both clouds, but Azure's control plane is
-private too, which is why `kubectl` never runs from the laptop — every command goes through
-`az aks command invoke`. The alternative is a bastion host; `command invoke` needs no extra
-infrastructure and leaves the topology untouched. Every call pays a pod-start delay, and that is the
-part I would revisit first.
-
-**Ingress in front of ClusterIP services.** The API is reached only through an `Ingress`, and every
-service — including the database — stays `ClusterIP`. One entry point per cluster keeps TLS and
-routing in a single place, and no service can accidentally become public.
-
-**Postgres with pgvector, initialised by a ConfigMap.** The database choice follows the workload,
-which needs similarity search next to the data. The `vector` extension is created by an init script
-mounted from a ConfigMap, so a fresh volume initialises itself. The cost is that backups and failover
-are mine to own — flagged below rather than hidden.
-
-**Two-phase apply across three providers.** Cloudflare's DNS and pool config need ingress addresses
-that only exist after the clusters are built, so the rollout scripts write the real address back to
-`terraform.tfvars` and a second `apply` publishes it. I considered a polling `null_resource`; it
-would have been fewer lines and much harder to debug when it timed out.
-
-**TCP health checks at the edge.** Cloudflare's HTTP monitor marked healthy origins down: the
-origins terminate TLS at the cloud load balancer, and the edge probes on 443. A TCP monitor measures
-reachability without unwinding the TLS chain, which is the property I actually needed.
 
