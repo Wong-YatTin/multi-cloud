@@ -4,7 +4,7 @@
 ## ✅ Assignment Requirements
 
 | # | Requirement | Marks | 
-|---|---|---|---|
+|---|---|---|
 | 1 | Multiple Cloud Providers | 15 |
 | 2 | VPC + 2 Private Subnets | 5 |
 | 3 | Cluster AutoScaler | 5 | 
