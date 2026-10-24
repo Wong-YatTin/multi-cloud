@@ -1,6 +1,21 @@
 # Deploy and manage Multi Cloud Kubernetes with Terraform (ITP4121  assignment)
+### Create multiple public cloud infrastructure and Kubernetes deployment with Terraform
 
-### Azure AKS + GCP GKE, provisioned with Terraform, fronted by Cloudflare global load balancing
+## ✅ Assignment Requirements
+
+| # | Requirement | Marks | Where |
+|---|---|---|---|
+| 1 | Multiple Cloud Providers | 15 | Azure AKS + GCP GKE |
+| 2 | VPC + 2 Private Subnets | 5 | `terraform/azure/` — 2 subnets; GCP ⚠️ 1 subnet |
+| 3 | Cluster AutoScaler | 5 | AKS 1–2 per pool, GKE 1–3 |
+| 4 | App with PostgreSQL StatefulSet | 5 | `kubernetes/` — pgvector |
+| 5 | Kubernetes Secrets | 5 | `pgvector-secrets`, `langchain-gemini-service-secrets` |
+| 6 | Cloud-native Load Balancer | 5 | Ingress + Cloudflare GSLB ⚠️ Azure AGIC |
+| 7 | SSL/TLS | 5 | Cloudflare edge TLS |
+| 8 | Cloud Logging | 5 | Log Analytics + Cloud Logging |
+| 9 | Multi-Cloud HA (DNS) | 5 | Cloudflare pools + TCP health checks |
+
+
 
 > **My role:** architecture and implementation of the entire stack — Azure and GCP infrastructure,
 > the Kubernetes platform, and the application deployment. Coursework, built and demoed end-to-end
