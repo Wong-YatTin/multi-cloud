@@ -2,10 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: langchain-gemini-ingress
-  annotations:
-    kubernetes.io/ingress.class: "azure/application-gateway"
-    appgw.ingress.kubernetes.io/use-private-ip: "false"
 spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
   rules:
   - host: api-azure.hkiit-assistant.me  # 使用實際域名
     http:

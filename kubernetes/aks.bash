@@ -42,8 +42,7 @@ az aks command invoke \
     --output json > /workspaces/muti-cloud/terraform/azure/lb_ip.json
 
 # 從 JSON 輸出中提取 IP
-AKS_IP=$(jq -r '.value.result' /workspaces/muti-cloud/terraform/azure/lb_ip.json)
-echo "AKS Ingress IP: $AKS_IP"
+AKS_IP=$(jq -r '.logs' /workspaces/muti-cloud/terraform/azure/lb_ip.json | tr -d '[:space:]')
 
 # 將 IP 輸出到共用的 variable.tfvars 檔案（使用絕對路徑）
 if [ -f /workspaces/muti-cloud/terraform/terraform.tfvars ]; then

@@ -28,6 +28,10 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
   
   private_cluster_enabled = true
+
+    web_app_routing {
+    dns_zone_ids = []
+  }
   
   oms_agent {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
