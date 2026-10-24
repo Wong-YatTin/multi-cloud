@@ -1,5 +1,5 @@
 # Deploy and manage Multi Cloud Kubernetes with Terraform (ITP4121  assignment)
-### Create multiple public cloud infrastructure and Kubernetes deployment with Terraform
+
 
 ## ✅ Assignment Requirements
 
@@ -15,7 +15,7 @@
 | 8 | Cloud Logging | 5 | 
 | 9 | Multi-Cloud HA (DNS) | 5 | 
 
-
+## Create multiple public cloud infrastructure and Kubernetes deployment with Terraform
 
 > **My role:** architecture and implementation of the entire stack — Azure and GCP infrastructure,
 > the Kubernetes platform, and the application deployment. Coursework, built and demoed end-to-end
